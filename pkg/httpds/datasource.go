@@ -11,9 +11,9 @@ type DataSource struct {
 	plugins []Plugin
 }
 
-func New(plugins ...Plugin) DataSource {
+func New(client *http.Client, plugins ...Plugin) DataSource {
 	return DataSource{
-		client:  http.DefaultClient,
+		client:  client,
 		plugins: plugins,
 	}
 }
