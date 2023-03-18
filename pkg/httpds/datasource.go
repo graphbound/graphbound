@@ -1,11 +1,10 @@
 package httpds
 
-import "net/http"
+import (
+	"net/http"
+)
 
-type Plugin interface {
-	OnRequest(req *http.Request)
-	OnResponse(req *http.Request, res *http.Response, err error)
-}
+type Plugin func(c *Context)
 
 type DataSource struct {
 	client  *http.Client
@@ -19,13 +18,21 @@ func New(plugins ...Plugin) DataSource {
 	}
 }
 
-func (ds DataSource) Do(req *http.Request) (*http.Response, error) {
-	for _, p := range ds.plugins {
-		p.OnRequest(req)
+func (ds *DataSource) Do(req *http.Request) (*http.Response, error) {
+	ctx := NewContext(ds.plugins...)
+	ctx.Use(ds.do(req))
+	ctx.Handle()
+	return ctx.Response, ctx.Error
+}
+
+func (ds *DataSource) do(req *http.Request) func(c *Context) {
+	return func(c *Context) {
+		c.Request = req
+		c.Next()
+		res, err := ds.client.Do(c.Request)
+		if err != nil {
+			c.Error = err
+		}
+		c.Response = res
 	}
-	res, err := ds.client.Do(req)
-	for _, p := range ds.plugins {
-		p.OnResponse(req, res, err)
-	}
-	return res, err
 }
