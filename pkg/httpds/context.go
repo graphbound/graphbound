@@ -1,6 +1,7 @@
 package httpds
 
 import (
+	"context"
 	"net/http"
 )
 
@@ -10,6 +11,7 @@ type Context struct {
 	Error    error
 	handlers []Plugin
 	index    int8
+	Ctx      context.Context
 }
 
 func NewContext(handlers ...Plugin) *Context {
