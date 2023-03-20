@@ -16,9 +16,6 @@ type Context struct {
 
 func NewContext(handlers ...Plugin) *Context {
 	return &Context{
-		Request:  nil,
-		Response: nil,
-		Error:    nil,
 		handlers: handlers,
 		index:    -1,
 	}
