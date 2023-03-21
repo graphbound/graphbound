@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -23,7 +21,7 @@ func NewQuoteController(
 }
 
 func (qc quoteController) GetQuote(c *gin.Context) {
-	resp, err := qc.yeAPI.GetQuote(context.Background())
+	resp, err := qc.yeAPI.GetQuote(c.Request.Context())
 	if err != nil {
 		qc.logger.Errorw("error getting quote",
 			"error", err,

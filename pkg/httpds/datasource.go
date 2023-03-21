@@ -21,20 +21,19 @@ func New(client *http.Client, plugins ...Plugin) DataSource {
 
 func (ds *DataSource) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 	dsCtx := NewContext(ds.plugins...)
-	dsCtx.Use(ds.do(ctx, req))
+	dsCtx.Request = req.WithContext(ctx)
+	dsCtx.Use(ds.do())
 	dsCtx.Handle()
 	return dsCtx.Response, dsCtx.Error
 }
 
-func (ds *DataSource) do(ctx context.Context, req *http.Request) func(c *Context) {
+func (ds *DataSource) do() func(c *Context) {
 	return func(c *Context) {
-		c.Ctx = ctx
-		c.Request = req
-		c.Next()
 		res, err := ds.client.Do(c.Request)
 		if err != nil {
 			c.Error = err
 		}
 		c.Response = res
+		c.Next()
 	}
 }

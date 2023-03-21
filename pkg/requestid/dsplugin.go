@@ -6,7 +6,7 @@ import (
 
 func NewHTTPDSPlugin() httpds.Plugin {
 	return func(c *httpds.Context) {
-		if rid, ok := FromContext(c.Ctx); ok {
+		if rid, ok := FromContext(c.Request.Context()); ok {
 			c.Request.Header.Add("X-Request-ID", rid)
 		}
 		c.Next()
