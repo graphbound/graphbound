@@ -3,14 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 
-	"github.com/google/uuid"
 	"github.com/graphbound/graphbound/pkg/httpds"
-	"github.com/graphbound/graphbound/pkg/log"
-	"github.com/graphbound/graphbound/pkg/requestid"
 )
 
 type GetQuoteResponse struct {
@@ -18,7 +14,7 @@ type GetQuoteResponse struct {
 }
 
 type YeAPI interface {
-	GetQuote() (*GetQuoteResponse, error)
+	GetQuote(ctx context.Context) (*GetQuoteResponse, error)
 }
 
 type yeAPI struct {
@@ -58,22 +54,4 @@ func (ds yeAPI) GetQuote(ctx context.Context) (*GetQuoteResponse, error) {
 	var jres *GetQuoteResponse
 	err = json.NewDecoder(res.Body).Decode(&jres)
 	return jres, err
-}
-
-func main() {
-	logger := log.NewLogger(false)
-
-	ye := NewYeAPI("https://api.kanye.rest",
-		log.NewHTTPDSPlugin(logger.Desugar().Named("YeAPI")),
-		requestid.NewHTTPDSPlugin(),
-	)
-
-	ctx := requestid.NewContext(context.Background(), uuid.New().String())
-
-	resp, err := ye.GetQuote(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(resp.Quote)
 }
