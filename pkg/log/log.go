@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// NewLogger creates a new logger
 func NewLogger(isProduction bool) *zap.SugaredLogger {
 	var logger *zap.Logger
 	if isProduction {
