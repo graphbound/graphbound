@@ -8,6 +8,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// NewServerPlugin creates a logging middleware for HTTP servers. Logs
+// the HTTP request, response and error, if any.
 func NewServerPlugin(logger *zap.SugaredLogger) gin.HandlerFunc {
 	return ginzap.Ginzap(
 		logger.Desugar(),

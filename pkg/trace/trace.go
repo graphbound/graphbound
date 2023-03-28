@@ -14,6 +14,8 @@ const (
 	requestIDKey = "http.request_id"
 )
 
+// NewTracerProvider creates a new tracer provider. One should one tracer
+// provider per app/service (queues, HTTP data sources, databases, servers, etc.)
 func NewTracerProvider(
 	service string,
 	isProduction bool,

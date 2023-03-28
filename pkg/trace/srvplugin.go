@@ -8,6 +8,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+// NewServerPlugin creates a tracing middleware for HTTP servers. Traces
+// the HTTP request and injects the tracer into the request context.
 func NewServerPlugin(service string, provider trace.TracerProvider) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		otelgin.Middleware(
