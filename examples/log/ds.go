@@ -45,7 +45,7 @@ func (ds yeAPI) GetQuote(ctx context.Context) (*GetQuoteResponse, error) {
 		return nil, err
 	}
 
-	res, err := ds.DataSource.Do(ctx, req)
+	res, err := ds.DataSource.Do(ctx, "/", req)
 	if err != nil {
 		return nil, err
 	}

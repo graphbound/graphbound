@@ -7,6 +7,7 @@ import (
 // Context is the core of data sources. It allows us to pass variables between
 // handlers and manage the flow of a request
 type Context struct {
+	fullPath string
 	Request  *http.Request
 	Response *http.Response
 	Error    error
@@ -20,6 +21,11 @@ func NewContext(handlers ...Plugin) *Context {
 		handlers: handlers,
 		index:    0,
 	}
+}
+
+// FullPath returns the request templated path
+func (c Context) FullPath() string {
+	return c.fullPath
 }
 
 // Use adds a new handler to the handler chain

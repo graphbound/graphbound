@@ -5,6 +5,7 @@ import (
 
 	"github.com/graphbound/graphbound/pkg/health"
 	"github.com/graphbound/graphbound/pkg/log"
+	"github.com/graphbound/graphbound/pkg/metric"
 	"github.com/graphbound/graphbound/pkg/requestid"
 	"github.com/graphbound/graphbound/pkg/trace"
 )
@@ -38,6 +39,7 @@ func main() {
 		requestid.NewHTTPDSPlugin(),
 		log.NewHTTPDSPlugin(logger.Desugar().Named("datasource")),
 		trace.NewHTTPDSPlugin(yeAPITracerProvider),
+		metric.NewHTTPDSPlugin(),
 	)
 
 	controller := NewQuoteController(ye, logger.Named("controller"))
@@ -50,6 +52,8 @@ func main() {
 		health.NewServerComponent("server", "1.0.0"),
 		health.NewHTTPDSHealthCheck("ye-api", "https://api.kanye.rest"),
 	)
+	server.engine.Use(metric.NewServerPlugin())
+	metric.WithServer(server.engine)
 	server.engine.GET("/", controller.GetQuote)
 
 	err = server.engine.Run()
