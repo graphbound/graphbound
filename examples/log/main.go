@@ -1,34 +1,54 @@
 package main
 
 import (
-	"time"
+	"context"
 
-	ginrequestid "github.com/gin-contrib/requestid"
-	ginzap "github.com/gin-contrib/zap"
-	"github.com/gin-gonic/gin"
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/requestid"
+	"github.com/graphbound/graphbound/pkg/trace"
 )
 
 func main() {
 	logger := log.NewLogger(false)
 
+	serverTraceProvider, err := trace.NewTracerProvider("server", false)
+	if err != nil {
+		logger.Panicf("Error creating tracer provider: %w", err)
+	}
+
+	yeAPITracerProvider, err := trace.NewTracerProvider("ye-api", false)
+	if err != nil {
+		logger.Panicf("Error creating tracer provider: %w", err)
+	}
+
+	defer func() {
+		if err := serverTraceProvider.Shutdown(context.Background()); err != nil {
+			logger.Errorf("Error shutting down server tracer provider: %w", err)
+		}
+		if err := yeAPITracerProvider.Shutdown(context.Background()); err != nil {
+			logger.Errorf("Error shutting down datasource tracer provider: %w", err)
+		}
+		if err := logger.Sync(); err != nil {
+			logger.Errorf("Error flushing logger: %w", err)
+		}
+	}()
+
 	ye := NewYeAPI("https://api.kanye.rest",
-		log.NewHTTPDSPlugin(logger.Desugar().Named("datasource")),
 		requestid.NewHTTPDSPlugin(),
+		log.NewHTTPDSPlugin(logger.Desugar().Named("datasource")),
+		trace.NewHTTPDSPlugin(yeAPITracerProvider),
 	)
 
 	controller := NewQuoteController(ye, logger.Named("controller"))
 
-	server := NewServer(controller, logger.Named("server"))
-	server.engine.Use(ginrequestid.New(ginrequestid.WithHandler(
-		func(c *gin.Context, rid string) {
-			c.Request = c.Request.WithContext(
-				requestid.NewContext(c.Request.Context(), rid),
-			)
-		},
-	)))
-	server.engine.Use(ginzap.Ginzap(server.logger.Desugar(), time.RFC3339, true))
+	server := NewServer(controller)
+	server.engine.Use(requestid.NewServerPlugin())
+	server.engine.Use(log.NewServerPlugin(logger.Named("server")))
+	server.engine.Use(trace.NewServerPlugin("server", serverTraceProvider)...)
 	server.engine.GET("/", controller.GetQuote)
-	server.engine.Run()
+
+	err = server.engine.Run()
+	if err != nil {
+		logger.Panicf("Error starting server: %w", err)
+	}
 }
