@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/graphbound/graphbound/pkg/health"
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/requestid"
 	"github.com/graphbound/graphbound/pkg/trace"
@@ -45,6 +46,10 @@ func main() {
 	server.engine.Use(requestid.NewServerPlugin())
 	server.engine.Use(log.NewServerPlugin(logger.Named("server")))
 	server.engine.Use(trace.NewServerPlugin("server", serverTraceProvider)...)
+	health.WithServer(server.engine,
+		health.NewServerComponent("server", "1.0.0"),
+		health.NewHTTPDSHealthCheck("ye-api", "https://api.kanye.rest"),
+	)
 	server.engine.GET("/", controller.GetQuote)
 
 	err = server.engine.Run()
