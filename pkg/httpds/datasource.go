@@ -31,8 +31,9 @@ func New(client *http.Client, plugins ...Plugin) DataSource {
 // the main handler. It provides the same exact features as [Client.Do].
 //
 // [Client.Do]: https://pkg.go.dev/net/http#Client.Do
-func (ds *DataSource) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
+func (ds *DataSource) Do(ctx context.Context, path string, req *http.Request) (*http.Response, error) {
 	dsCtx := NewContext(ds.plugins...)
+	dsCtx.fullPath = path
 	dsCtx.Request = req.WithContext(ctx)
 	dsCtx.Use(ds.do())
 	dsCtx.Handle()
