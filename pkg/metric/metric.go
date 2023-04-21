@@ -26,6 +26,7 @@ var (
 	})
 )
 
+// computeRequestSize computes the request size
 func computeRequestSize(r *http.Request) int {
 	s := 0
 	s += len(r.URL.String())

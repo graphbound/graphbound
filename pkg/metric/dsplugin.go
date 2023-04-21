@@ -7,6 +7,8 @@ import (
 	"github.com/graphbound/graphbound/pkg/httpds"
 )
 
+// NewHTTPDSPlugin creates a metrics middleware for HTTP data sources. Registers
+// the HTTP request method, host, path and status.
 func NewHTTPDSPlugin() httpds.Plugin {
 	return func(c *httpds.Context) {
 		start := time.Now()
