@@ -12,10 +12,13 @@ const (
 	metricPath = "/metrics"
 )
 
+// WithServer adds a metrics endpoint to a given server
 func WithServer(srv *gin.Engine) {
 	srv.GET(metricPath, gin.WrapH(promhttp.Handler()))
 }
 
+// NewServerPlugin creates a metrics middleware for HTTP servers. Registers
+// metrics for HTTP requests and responses.
 func NewServerPlugin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.URL.Path == metricPath {
