@@ -7,34 +7,54 @@ import (
 	"net/url"
 
 	"github.com/graphbound/graphbound/pkg/httpds"
+	"github.com/graphbound/graphbound/pkg/plugin"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.uber.org/zap"
 )
 
-type ClientURL string
+const serviceName = "YeAPI"
 
-type GetQuoteResponse struct {
-	Quote string `json:"quote"`
-}
+type (
+	ClientURL string
 
-type Client interface {
-	GetQuote(ctx context.Context) (*GetQuoteResponse, error)
-}
+	tracerProvider sdktrace.TracerProvider
 
-type client struct {
-	baseURL *url.URL
-	httpds.DataSource
-}
+	GetQuoteResponse struct {
+		Quote string `json:"quote"`
+	}
+
+	Client interface {
+		GetQuote(ctx context.Context) (*GetQuoteResponse, error)
+	}
+
+	client struct {
+		baseURL *url.URL
+		logger  *zap.SugaredLogger
+		httpds.DataSource
+	}
+)
 
 var _ (Client) = (*client)(nil)
 
-func ProvideClient(rawURL ClientURL, plugins ...httpds.Plugin) *client {
+func ProvideClient(
+	rawURL ClientURL,
+	logger *zap.SugaredLogger,
+	tracerProvider *tracerProvider,
+	plugins ...httpds.Plugin,
+) *client {
 	baseURL, err := url.Parse(string(rawURL))
 	if err != nil {
 		panic(err)
 	}
 
+	l := logger.Named(serviceName)
+	p := plugin.ProvideHTTPDSPlugins(l, (*sdktrace.TracerProvider)(tracerProvider))
+	p = append(p, plugins...)
+
 	return &client{
 		baseURL:    baseURL,
-		DataSource: httpds.New(http.DefaultClient, plugins...),
+		logger:     l,
+		DataSource: httpds.New(http.DefaultClient, p...),
 	}
 }
 

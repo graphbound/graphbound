@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	QuoteControllerProvider = wire.NewSet(
+	QuoteControllerProviderSet = wire.NewSet(
 		ProvideQuoteController,
 		wire.Bind(
 			new(QuoteController[gin.Context]),

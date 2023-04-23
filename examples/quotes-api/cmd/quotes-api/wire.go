@@ -8,34 +8,40 @@ import (
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/rest"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/quote"
 	"github.com/graphbound/graphbound/examples/quotes-api/pkg/yeapi"
-	"github.com/graphbound/graphbound/pkg/config"
 	"github.com/graphbound/graphbound/pkg/httpds"
 	"github.com/graphbound/graphbound/pkg/log"
+	"github.com/graphbound/graphbound/pkg/server"
 )
 
-type server struct {
+type API struct {
 	quoteController rest.QuoteController[gin.Context]
+	server          *gin.Engine
 }
 
-func ProvideServer(
+func ProvideAPI(
 	quoteController rest.QuoteController[gin.Context],
-) *server {
-	return &server{
+	server *gin.Engine,
+) *API {
+	return &API{
 		quoteController: quoteController,
+		server:          server,
 	}
 }
 
-func initializeServer() (*server, error) {
+func initializeAPI() (*API, error) {
 	wire.Build(
 		ProvideConfig,
+		wire.FieldsOf(new(*Config),
+			"AppEnvironment",
+			"YeAPIURL",
+		),
 		log.NewLogger,
-		yeapi.ClientProvider,
-		quote.GetQuoteUseCaseProvider,
-		rest.QuoteControllerProvider,
-		wire.FieldsOf(new(*Config), "YeAPIURL"),
+		yeapi.ClientProviderSet,
+		quote.GetQuoteUseCaseProviderSet,
+		rest.QuoteControllerProviderSet,
+		server.ServerProviderSet,
 		wire.Value([]httpds.Plugin(nil)),
-		wire.Value(config.AppEnvironment("development")),
-		ProvideServer,
+		ProvideAPI,
 	)
-	return &server{}, nil
+	return &API{}, nil
 }

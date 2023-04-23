@@ -2,11 +2,23 @@ package yeapi
 
 import (
 	"github.com/google/wire"
+	"github.com/graphbound/graphbound/pkg/config"
+	"github.com/graphbound/graphbound/pkg/trace"
 )
 
+func ProvideTracerProvider(appEnvironment config.AppEnvironment) *tracerProvider {
+	tp := trace.NewTracerProvider(
+		serviceName,
+		appEnvironment,
+	)
+
+	return (*tracerProvider)(tp)
+}
+
 var (
-	ClientProvider = wire.NewSet(
+	ClientProviderSet = wire.NewSet(
 		ProvideClient,
+		ProvideTracerProvider,
 		wire.Bind(
 			new(Client),
 			new(*client),

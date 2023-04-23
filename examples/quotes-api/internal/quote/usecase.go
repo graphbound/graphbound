@@ -20,9 +20,10 @@ func ProvideGetQuoteUseCase(
 	yeAPI yeapi.Client,
 	logger *zap.SugaredLogger,
 ) *getQuoteUseCase {
+	l := logger.Named("GetQuoteUseCase")
 	return &getQuoteUseCase{
 		yeAPI:  yeAPI,
-		logger: logger,
+		logger: l,
 	}
 }
 

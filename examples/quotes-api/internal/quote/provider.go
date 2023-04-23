@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	GetQuoteUseCaseProvider = wire.NewSet(
+	GetQuoteUseCaseProviderSet = wire.NewSet(
 		ProvideGetQuoteUseCase,
 		wire.Bind(
 			new(domain.GetQuoteUseCase),

@@ -21,9 +21,10 @@ func ProvideQuoteController(
 	getQuoteUseCase domain.GetQuoteUseCase,
 	logger *zap.SugaredLogger,
 ) *quoteController {
+	l := logger.Named("QuoteController")
 	return &quoteController{
 		getQuoteUseCase: getQuoteUseCase,
-		logger:          logger,
+		logger:          l,
 	}
 }
 
