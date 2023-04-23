@@ -37,14 +37,14 @@ func ProvideHealthChecks(
 	}
 }
 
-func initializeAPI() (*API, error) {
-	wire.Build(
+func initializeAPI() (*API, func(), error) {
+	panic(wire.Build(
 		ProvideConfig,
 		wire.FieldsOf(new(*Config),
 			"AppEnvironment",
 			"YeAPIURL",
 		),
-		log.NewLogger,
+		log.LoggerProviderSet,
 		yeapi.ClientProviderSet,
 		quote.GetQuoteUseCaseProviderSet,
 		rest.QuoteControllerProviderSet,
@@ -53,6 +53,5 @@ func initializeAPI() (*API, error) {
 		wire.Value([]httpds.Plugin(nil)),
 		ProvideHealthChecks,
 		ProvideAPI,
-	)
-	return &API{}, nil
+	))
 }
