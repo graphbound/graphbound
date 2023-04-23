@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/graphbound/graphbound/pkg/health"
 	"github.com/graphbound/graphbound/pkg/httpds"
 	"github.com/graphbound/graphbound/pkg/plugin"
+	healthgo "github.com/hellofresh/health-go/v5"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 )
@@ -18,6 +20,8 @@ type (
 	ClientURL string
 
 	tracerProvider sdktrace.TracerProvider
+
+	HealthCheck healthgo.Config
 
 	GetQuoteResponse struct {
 		Quote string `json:"quote"`
@@ -56,6 +60,10 @@ func ProvideClient(
 		logger:     l,
 		DataSource: httpds.New(http.DefaultClient, p...),
 	}
+}
+
+func ProvideClientHealthCheck(url ClientURL) HealthCheck {
+	return (HealthCheck)(health.NewHTTPDSHealthCheck(serviceName, string(url)))
 }
 
 func (ds client) GetQuote(ctx context.Context) (*GetQuoteResponse, error) {

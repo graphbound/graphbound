@@ -11,6 +11,7 @@ import (
 	"github.com/graphbound/graphbound/pkg/httpds"
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/server"
+	"github.com/hellofresh/health-go/v5"
 )
 
 type API struct {
@@ -28,6 +29,14 @@ func ProvideAPI(
 	}
 }
 
+func ProvideHealthChecks(
+	yeAPIHealthCheck yeapi.HealthCheck,
+) []health.Config {
+	return []health.Config{
+		(health.Config)(yeAPIHealthCheck),
+	}
+}
+
 func initializeAPI() (*API, error) {
 	wire.Build(
 		ProvideConfig,
@@ -40,7 +49,9 @@ func initializeAPI() (*API, error) {
 		quote.GetQuoteUseCaseProviderSet,
 		rest.QuoteControllerProviderSet,
 		server.ServerProviderSet,
+		wire.Value(server.Version("1.0.0")),
 		wire.Value([]httpds.Plugin(nil)),
+		ProvideHealthChecks,
 		ProvideAPI,
 	)
 	return &API{}, nil

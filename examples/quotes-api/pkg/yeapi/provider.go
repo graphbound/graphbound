@@ -17,8 +17,9 @@ func ProvideTracerProvider(appEnvironment config.AppEnvironment) *tracerProvider
 
 var (
 	ClientProviderSet = wire.NewSet(
-		ProvideClient,
 		ProvideTracerProvider,
+		ProvideClientHealthCheck,
+		ProvideClient,
 		wire.Bind(
 			new(Client),
 			new(*client),

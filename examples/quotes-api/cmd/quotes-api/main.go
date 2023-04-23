@@ -14,10 +14,6 @@ func main() {
 			}
 		}()
 
-		health.WithServer(api.engine,
-			health.NewServerComponent("api", "1.0.0"),
-			health.NewHTTPDSHealthCheck("ye-api", "https://api.kanye.rest"),
-		)
 		err = api.engine.Run()
 		if err != nil {
 			logger.Panicf("Error starting api: %w", err)
