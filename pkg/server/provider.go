@@ -27,4 +27,8 @@ var (
 		ProvideTracerProvider,
 		NewServer,
 	)
+	GraphQLServerProviderSet = wire.NewSet(
+		ProvideTracerProvider,
+		NewGraphQLServer,
+	)
 )

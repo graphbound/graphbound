@@ -1,6 +1,9 @@
 package server
 
 import (
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
 	"github.com/graphbound/graphbound/pkg/health"
 	"github.com/graphbound/graphbound/pkg/log"
@@ -12,7 +15,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const serviceName = "Server"
+const serviceName string = "Server"
 
 type (
 	tracerProvider sdktrace.TracerProvider
@@ -37,6 +40,29 @@ func NewServer(
 		health.NewServerComponent(serviceName, string(version)),
 		healthChecks...,
 	)
+
+	return server
+}
+
+func NewGraphQLServer(
+	logger *zap.SugaredLogger,
+	tracerProvider *tracerProvider,
+	version Version,
+	healthChecks []healthgo.Config,
+	es graphql.ExecutableSchema,
+) *gin.Engine {
+	server := NewServer(
+		logger,
+		tracerProvider,
+		version,
+		healthChecks,
+	)
+
+	graphqlHandler := gin.WrapH(handler.NewDefaultServer(es))
+	playgroundHandler := gin.WrapH(playground.Handler("GraphQL", "/query"))
+
+	server.POST("/query", graphqlHandler)
+	server.GET("/", playgroundHandler)
 
 	return server
 }
