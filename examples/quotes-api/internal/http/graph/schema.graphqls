@@ -1,0 +1,14 @@
+type Quote {
+  id: ID!
+  text: String!
+  author: Author!
+}
+
+type Author {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  quotes: [Quote!]!
+}

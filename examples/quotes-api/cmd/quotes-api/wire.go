@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/rest"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/quote"
 	"github.com/graphbound/graphbound/examples/quotes-api/pkg/yeapi"
@@ -47,8 +48,9 @@ func initializeAPI() (*API, func(), error) {
 		log.LoggerProviderSet,
 		yeapi.ClientProviderSet,
 		quote.GetQuoteUseCaseProviderSet,
+		graph.ResolverProviderSet,
 		rest.QuoteControllerProviderSet,
-		server.ServerProviderSet,
+		server.GraphQLServerProviderSet,
 		wire.Value(server.Version("1.0.0")),
 		wire.Value([]httpds.Plugin(nil)),
 		ProvideHealthChecks,

@@ -7,7 +7,7 @@ func main() {
 	}
 	defer cleanup()
 
-	api.server.GET("/", api.quoteController.GetQuote)
+	// api.server.GET("/", api.quoteController.GetQuote)
 	if err := api.server.Run(); err != nil {
 		panic(err)
 	}
