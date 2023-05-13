@@ -23,7 +23,7 @@ type (
 	Version string
 )
 
-func NewServer(
+func NewRESTServer(
 	logger *zap.SugaredLogger,
 	tracerProvider *tracerProvider,
 	version Version,
@@ -51,7 +51,7 @@ func NewGraphQLServer(
 	healthChecks []healthgo.Config,
 	es graphql.ExecutableSchema,
 ) *gin.Engine {
-	server := NewServer(
+	server := NewRESTServer(
 		logger,
 		tracerProvider,
 		version,

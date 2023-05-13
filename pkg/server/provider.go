@@ -23,9 +23,9 @@ func ProvideTracerProvider(appEnvironment config.AppEnvironment) (*tracerProvide
 }
 
 var (
-	ServerProviderSet = wire.NewSet(
+	RESTServerProviderSet = wire.NewSet(
 		ProvideTracerProvider,
-		NewServer,
+		NewRESTServer,
 	)
 	GraphQLServerProviderSet = wire.NewSet(
 		ProvideTracerProvider,
