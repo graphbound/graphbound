@@ -25,7 +25,7 @@ func NewTracerProvider(
 	appEnvironment config.AppEnvironment,
 ) *trace.TracerProvider {
 	opts := []otlptracehttp.Option{}
-	if config.IsProduction(appEnvironment) {
+	if !config.IsProduction(appEnvironment) {
 		opts = append(opts, otlptracehttp.WithInsecure())
 	}
 	client := otlptracehttp.NewClient(opts...)
