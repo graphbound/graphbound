@@ -5,6 +5,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
+	"github.com/graphbound/graphbound/pkg/ginctx"
 	"github.com/graphbound/graphbound/pkg/health"
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/metric"
@@ -15,7 +16,10 @@ import (
 	"go.uber.org/zap"
 )
 
-const serviceName string = "Server"
+const (
+	serviceName                string = "Server"
+	introspectionOperationName string = "IntrospectionQuery"
+)
 
 type (
 	tracerProvider sdktrace.TracerProvider
@@ -65,10 +69,12 @@ func NewGraphQLServer(
 
 	gql := handler.NewDefaultServer(es)
 	gql.Use(trace.NewGraphQLServerPlugin(serviceName, (*sdktrace.TracerProvider)(tracerProvider)))
+	gql.Use(log.NewGraphQLServerPlugin(logger.Named(serviceName), introspectionOperationName))
 
 	graphqlHandler := gin.WrapH(gql)
 	playgroundHandler := gin.WrapH(playground.Handler("GraphQL", "/query"))
 
+	server.Use(ginctx.NewServerPlugin())
 	server.POST("/query", graphqlHandler)
 	server.GET("/", playgroundHandler)
 

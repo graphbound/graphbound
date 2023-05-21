@@ -3,6 +3,7 @@ package log
 import (
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -16,4 +17,16 @@ func NewServerPlugin(logger *zap.SugaredLogger) gin.HandlerFunc {
 		time.RFC3339,
 		true,
 	)
+}
+
+// NewGraphQLServerPlugin creates a logging middleware for GraphQL servers. Logs
+// GraphQL operations, responses and errors, if any.
+func NewGraphQLServerPlugin(
+	logger *zap.SugaredLogger,
+	introspectionOperationName string,
+) graphql.HandlerExtension {
+	return loggerHandlerExtension{
+		logger:                     logger.Desugar(),
+		introspectionOperationName: introspectionOperationName,
+	}
 }
