@@ -1,8 +1,10 @@
 package trace
 
 import (
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/gin-gonic/gin"
 	"github.com/graphbound/graphbound/pkg/requestid"
+	"github.com/ravilushqa/otelgqlgen"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -24,4 +26,10 @@ func NewServerPlugin(service string, provider trace.TracerProvider) []gin.Handle
 			c.Next()
 		},
 	}
+}
+
+// NewGraphQLServerPlugin creates a tracing middleware for GraphQL servers. Traces
+// the GraphQL request and injects the tracer into the request context.
+func NewGraphQLServerPlugin(service string, provider trace.TracerProvider) graphql.HandlerExtension {
+	return otelgqlgen.Middleware(otelgqlgen.WithTracerProvider(provider))
 }

@@ -23,23 +23,33 @@ type (
 	Version string
 )
 
-func NewRESTServer(
-	logger *zap.SugaredLogger,
-	tracerProvider *tracerProvider,
+func newServer(
 	version Version,
 	healthChecks []healthgo.Config,
 ) *gin.Engine {
 	server := gin.New()
 	server.Use(requestid.NewServerPlugin())
-	server.Use(log.NewServerPlugin(logger.Named(serviceName)))
-	server.Use(trace.NewServerPlugin(serviceName, (*sdktrace.TracerProvider)(tracerProvider))...)
-	server.Use(metric.NewServerPlugin())
 
 	metric.WithServer(server)
 	health.WithServer(server,
 		health.NewServerComponent(serviceName, string(version)),
 		healthChecks...,
 	)
+
+	return server
+}
+
+func NewRESTServer(
+	logger *zap.SugaredLogger,
+	tracerProvider *tracerProvider,
+	version Version,
+	healthChecks []healthgo.Config,
+) *gin.Engine {
+	server := newServer(version, healthChecks)
+
+	server.Use(log.NewServerPlugin(logger.Named(serviceName)))
+	server.Use(trace.NewServerPlugin(serviceName, (*sdktrace.TracerProvider)(tracerProvider))...)
+	server.Use(metric.NewServerPlugin())
 
 	return server
 }
@@ -51,14 +61,12 @@ func NewGraphQLServer(
 	healthChecks []healthgo.Config,
 	es graphql.ExecutableSchema,
 ) *gin.Engine {
-	server := NewRESTServer(
-		logger,
-		tracerProvider,
-		version,
-		healthChecks,
-	)
+	server := newServer(version, healthChecks)
 
-	graphqlHandler := gin.WrapH(handler.NewDefaultServer(es))
+	gql := handler.NewDefaultServer(es)
+	gql.Use(trace.NewGraphQLServerPlugin(serviceName, (*sdktrace.TracerProvider)(tracerProvider)))
+
+	graphqlHandler := gin.WrapH(gql)
 	playgroundHandler := gin.WrapH(playground.Handler("GraphQL", "/query"))
 
 	server.POST("/query", graphqlHandler)
