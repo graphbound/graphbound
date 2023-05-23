@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -9,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type loggerHandlerExtension struct {
+type handlerExtension struct {
 	logger                     *zap.Logger
 	introspectionOperationName string
 }
@@ -17,17 +18,17 @@ type loggerHandlerExtension struct {
 var _ interface {
 	graphql.ResponseInterceptor
 	graphql.HandlerExtension
-} = (*loggerHandlerExtension)(nil)
+} = (*handlerExtension)(nil)
 
-func (e loggerHandlerExtension) ExtensionName() string {
+func (e handlerExtension) ExtensionName() string {
 	return "Logging"
 }
 
-func (e loggerHandlerExtension) Validate(schema graphql.ExecutableSchema) error {
+func (e handlerExtension) Validate(schema graphql.ExecutableSchema) error {
 	return nil
 }
 
-func (e loggerHandlerExtension) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+func (e handlerExtension) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	start := time.Now()
 
 	resp := next(ctx)
@@ -46,13 +47,6 @@ func (e loggerHandlerExtension) InterceptResponse(ctx context.Context, next grap
 		zap.Duration("latency", latency),
 	}
 
-	op := rctx.OperationName
-	if rctx.Operation != nil {
-		t := string(rctx.Operation.Operation)
-		op += ":" + t
-		fields = append(fields, zap.String("type", t))
-	}
-
 	c, ok := ginctx.FromContext(ctx)
 	if ok {
 		fields = append(fields,
@@ -66,7 +60,16 @@ func (e loggerHandlerExtension) InterceptResponse(ctx context.Context, next grap
 		}
 	}
 
-	e.logger.Info(op, fields...)
+	if rctx.Operation != nil {
+		op := string(rctx.Operation.Operation)
+		fields = append(fields, zap.String("type", op))
+		e.logger.Info(op, fields...)
+	} else {
+		for _, err := range resp.Errors {
+			msg := fmt.Sprintf("%s: %s", err.Rule, err.Message)
+			e.logger.Error(msg, fields...)
+		}
+	}
 
 	return resp
 }

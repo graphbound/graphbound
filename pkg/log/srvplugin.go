@@ -25,7 +25,7 @@ func NewGraphQLServerPlugin(
 	logger *zap.SugaredLogger,
 	introspectionOperationName string,
 ) graphql.HandlerExtension {
-	return loggerHandlerExtension{
+	return handlerExtension{
 		logger:                     logger.Desugar(),
 		introspectionOperationName: introspectionOperationName,
 	}
