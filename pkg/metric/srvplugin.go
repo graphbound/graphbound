@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen-contrib/prometheus"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -40,4 +42,12 @@ func NewServerPlugin() gin.HandlerFunc {
 		reqSz.Observe(float64(computeRequestSize(c.Request)))
 		resSz.Observe(float64(c.Writer.Size()))
 	}
+}
+
+// NewGraphQLServerPlugin creates a metrics middleware for GraphQL servers. Registers
+// metrics for GraphQL requests, resolvers and responses.
+func NewGraphQLServerPlugin() graphql.HandlerExtension {
+	ext := prometheus.Tracer{}
+	prometheus.Register()
+	return ext
 }

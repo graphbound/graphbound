@@ -70,6 +70,7 @@ func NewGraphQLServer(
 	gql := handler.NewDefaultServer(es)
 	gql.Use(trace.NewGraphQLServerPlugin(serviceName, (*sdktrace.TracerProvider)(tracerProvider)))
 	gql.Use(log.NewGraphQLServerPlugin(logger.Named(serviceName), introspectionOperationName))
+	gql.Use(metric.NewGraphQLServerPlugin())
 
 	graphqlHandler := gin.WrapH(gql)
 	playgroundHandler := gin.WrapH(playground.Handler("GraphQL", "/query"))
