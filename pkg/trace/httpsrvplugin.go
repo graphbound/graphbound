@@ -10,9 +10,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// NewServerPlugin creates a tracing middleware for HTTP servers. Traces
-// the HTTP request and injects the tracer into the request context.
-func NewServerPlugin(service string, provider trace.TracerProvider) []gin.HandlerFunc {
+// NewRESTServerPlugin creates a tracing plugin for REST servers. Traces the
+// HTTP request and injects the tracer into the request context.
+func NewRESTServerPlugin(service string, provider trace.TracerProvider) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		otelgin.Middleware(
 			service,
@@ -28,7 +28,7 @@ func NewServerPlugin(service string, provider trace.TracerProvider) []gin.Handle
 	}
 }
 
-// NewGraphQLServerPlugin creates a tracing middleware for GraphQL servers. Traces
+// NewGraphQLServerPlugin creates a tracing plugin for GraphQL servers. Traces
 // the GraphQL request and injects the tracer into the request context.
 func NewGraphQLServerPlugin(service string, provider trace.TracerProvider) graphql.HandlerExtension {
 	return otelgqlgen.Middleware(otelgqlgen.WithTracerProvider(provider))

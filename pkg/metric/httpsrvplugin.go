@@ -19,9 +19,9 @@ func WithServer(srv *gin.Engine) {
 	srv.GET(metricPath, gin.WrapH(promhttp.Handler()))
 }
 
-// NewServerPlugin creates a metrics middleware for HTTP servers. Registers
+// NewRESTServerPlugin creates a metrics plugin for REST servers. Registers
 // metrics for HTTP requests and responses.
-func NewServerPlugin() gin.HandlerFunc {
+func NewRESTServerPlugin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.URL.Path == metricPath {
 			c.Next()
@@ -44,7 +44,7 @@ func NewServerPlugin() gin.HandlerFunc {
 	}
 }
 
-// NewGraphQLServerPlugin creates a metrics middleware for GraphQL servers. Registers
+// NewGraphQLServerPlugin creates a metrics plugin for GraphQL servers. Registers
 // metrics for GraphQL requests, resolvers and responses.
 func NewGraphQLServerPlugin() graphql.HandlerExtension {
 	ext := prometheus.Tracer{}

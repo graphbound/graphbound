@@ -12,7 +12,7 @@ const (
 	tracerName = "github.com/graphbound/graphbound/pkg/trace"
 )
 
-// NewHTTPDSPlugin creates a tracing middleware for HTTP data sources. Traces
+// NewHTTPDSPlugin creates a tracing plugin for HTTP data sources. Traces
 // the HTTP request.
 func NewHTTPDSPlugin(provider trace.TracerProvider) httpds.Plugin {
 	tracer := provider.Tracer(
