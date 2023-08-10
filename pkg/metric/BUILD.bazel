@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "metric",
+    srcs = [
+        "httpdsplugin.go",
+        "httpsrvplugin.go",
+        "metric.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/metric",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/httpds",
+        "@com_github_99designs_gqlgen//graphql",
+        "@com_github_99designs_gqlgen_contrib//prometheus",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_prometheus_client_golang//prometheus",
+        "@com_github_prometheus_client_golang//prometheus/promauto",
+        "@com_github_prometheus_client_golang//prometheus/promhttp",
+    ],
+)

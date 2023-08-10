@@ -1,0 +1,28 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "server",
+    srcs = [
+        "provider.go",
+        "server.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/server",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/config",
+        "//pkg/ginctx",
+        "//pkg/health",
+        "//pkg/log",
+        "//pkg/metric",
+        "//pkg/requestid",
+        "//pkg/trace",
+        "@com_github_99designs_gqlgen//graphql",
+        "@com_github_99designs_gqlgen//graphql/handler",
+        "@com_github_99designs_gqlgen//graphql/playground",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_google_wire//:wire",
+        "@com_github_hellofresh_health_go_v5//:health-go",
+        "@io_opentelemetry_go_otel_sdk//trace",
+        "@org_uber_go_zap//:zap",
+    ],
+)

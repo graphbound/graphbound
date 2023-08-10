@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "quotes-rest-api_lib",
+    srcs = [
+        "config.go",
+        "main.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/examples/quotes-api/cmd/quotes-rest-api",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//examples/quotes-api/pkg/yeapi",
+        "//pkg/config",
+        "@com_github_kelseyhightower_envconfig//:envconfig",
+    ],
+)
+
+go_binary(
+    name = "quotes-rest-api",
+    embed = [":quotes-rest-api_lib"],
+    visibility = ["//visibility:public"],
+)

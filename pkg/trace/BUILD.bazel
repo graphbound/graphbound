@@ -1,0 +1,29 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "trace",
+    srcs = [
+        "httpdsplugin.go",
+        "httpsrvplugin.go",
+        "trace.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/trace",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/config",
+        "//pkg/httpds",
+        "//pkg/requestid",
+        "@com_github_99designs_gqlgen//graphql",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_ravilushqa_otelgqlgen//:otelgqlgen",
+        "@io_opentelemetry_go_contrib_instrumentation_github_com_gin_gonic_gin_otelgin//:otelgin",
+        "@io_opentelemetry_go_otel//attribute",
+        "@io_opentelemetry_go_otel//semconv/v1.17.0:v1_17_0",
+        "@io_opentelemetry_go_otel//semconv/v1.17.0/httpconv",
+        "@io_opentelemetry_go_otel_exporters_otlp_otlptrace//:otlptrace",
+        "@io_opentelemetry_go_otel_exporters_otlp_otlptrace_otlptracehttp//:otlptracehttp",
+        "@io_opentelemetry_go_otel_sdk//resource",
+        "@io_opentelemetry_go_otel_sdk//trace",
+        "@io_opentelemetry_go_otel_trace//:trace",
+    ],
+)

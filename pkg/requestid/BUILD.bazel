@@ -1,0 +1,17 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "requestid",
+    srcs = [
+        "httpdsplugin.go",
+        "httpsrvplugin.go",
+        "requestid.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/requestid",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/httpds",
+        "@com_github_gin_contrib_requestid//:requestid",
+        "@com_github_gin_gonic_gin//:gin",
+    ],
+)

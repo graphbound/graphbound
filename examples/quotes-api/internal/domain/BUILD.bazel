@@ -1,0 +1,8 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "domain",
+    srcs = ["quote.go"],
+    importpath = "github.com/graphbound/graphbound/examples/quotes-api/internal/domain",
+    visibility = ["//examples/quotes-api:__subpackages__"],
+)

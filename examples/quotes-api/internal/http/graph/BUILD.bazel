@@ -1,0 +1,18 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "graph",
+    srcs = [
+        "provider.go",
+        "resolver.go",
+        "schema.resolvers.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph",
+    visibility = ["//examples/quotes-api:__subpackages__"],
+    deps = [
+        "//examples/quotes-api/internal/domain",
+        "//examples/quotes-api/internal/http/graph/generated",
+        "@com_github_google_uuid//:uuid",
+        "@com_github_google_wire//:wire",
+    ],
+)
