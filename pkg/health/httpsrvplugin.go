@@ -32,7 +32,7 @@ func newLivezHandler(component health.Component) gin.HandlerFunc {
 }
 
 // newReadyzHandler creates a ready check. This check is used to check if the
-// server is ready to use and serve the traffic.
+// server is ready to use and serve the traffic
 func newReadyzHandler(component health.Component, checks ...health.Config) gin.HandlerFunc {
 	h, err := health.New(
 		health.WithComponent(component),

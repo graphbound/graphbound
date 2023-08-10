@@ -9,9 +9,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// NewServerPlugin creates a logging middleware for HTTP servers. Logs
+// NewRESTServerPlugin creates a logging plugin for REST servers. Logs
 // the HTTP request, response and error, if any.
-func NewServerPlugin(logger *zap.SugaredLogger) gin.HandlerFunc {
+func NewRESTServerPlugin(logger *zap.SugaredLogger) gin.HandlerFunc {
 	return ginzap.Ginzap(
 		logger.Desugar(),
 		time.RFC3339,
@@ -19,7 +19,7 @@ func NewServerPlugin(logger *zap.SugaredLogger) gin.HandlerFunc {
 	)
 }
 
-// NewGraphQLServerPlugin creates a logging middleware for GraphQL servers. Logs
+// NewGraphQLServerPlugin creates a logging plugin for GraphQL servers. Logs
 // GraphQL operations, responses and errors, if any.
 func NewGraphQLServerPlugin(
 	logger *zap.SugaredLogger,

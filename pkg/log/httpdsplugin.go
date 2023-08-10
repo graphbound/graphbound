@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// NewHTTPDSPlugin creates a logging middleware for HTTP data sources. Logs
+// NewHTTPDSPlugin creates a logging plugin for HTTP data sources. Logs
 // the HTTP request, response and error, if any.
 func NewHTTPDSPlugin(logger *zap.Logger) httpds.Plugin {
 	return func(c *httpds.Context) {
