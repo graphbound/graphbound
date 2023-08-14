@@ -114,6 +114,3 @@ fabric.properties
 
 # bin directory
 /bin
-
-# wire generated files
-*_gen.go
