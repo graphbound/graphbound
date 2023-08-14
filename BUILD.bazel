@@ -3,3 +3,5 @@ load("@gazelle//:def.bzl", "gazelle")
 # gazelle:prefix github.com/graphbound/graphbound
 
 gazelle(name = "gazelle")
+
+exports_files(["go.mod"])

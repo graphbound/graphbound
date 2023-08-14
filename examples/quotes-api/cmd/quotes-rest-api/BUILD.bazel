@@ -1,4 +1,5 @@
 load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("//tools/bzl:wire.bzl", "wire")
 
 go_library(
     name = "quotes-rest-api_lib",
@@ -12,6 +13,22 @@ go_library(
         "//examples/quotes-api/pkg/yeapi",
         "//pkg/config",
         "@com_github_kelseyhightower_envconfig//:envconfig",
+    ],
+)
+
+wire(
+    name = "quotes-rest-api_generate_wire",
+    srcs = [
+        "wire.go",
+        "//:go.mod",
+        "//examples/quotes-api/internal/http/rest",
+        "//examples/quotes-api/internal/quote",
+        "//examples/quotes-api/pkg/yeapi",
+        "//pkg/httpds",
+        "//pkg/log",
+        "//pkg/server",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_hellofresh_health_go_v5//:health-go",
     ],
 )
 
