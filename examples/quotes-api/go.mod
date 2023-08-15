@@ -1,15 +1,13 @@
 module github.com/graphbound/graphbound/examples/quotes-api
 
-go 1.20
-
-replace github.com/graphbound/graphbound => ../../
+go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.36
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
-	github.com/graphbound/graphbound v0.0.0-00010101000000-000000000000
+	github.com/graphbound/graphbound v0.0.0-20230814194454-370e685d2c37
 	github.com/hellofresh/health-go/v5 v5.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/vektah/gqlparser/v2 v2.5.8

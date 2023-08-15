@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "generated",
+    srcs = [
+        "prelude.generated.go",
+        "root_.generated.go",
+        "schema.generated.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph/generated",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/http/graph/model",
+        "@com_github_99designs_gqlgen//graphql",
+        "@com_github_99designs_gqlgen//graphql/introspection",
+        "@com_github_vektah_gqlparser_v2//:gqlparser",
+        "@com_github_vektah_gqlparser_v2//ast",
+    ],
+)

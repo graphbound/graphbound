@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "health",
+    srcs = [
+        "health.go",
+        "httpsrvplugin.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/health",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_hellofresh_health_go_v5//:health-go",
+        "@com_github_hellofresh_health_go_v5//checks/http",
+    ],
+)

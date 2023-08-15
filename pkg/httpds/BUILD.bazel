@@ -1,0 +1,11 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "httpds",
+    srcs = [
+        "context.go",
+        "httpds.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/httpds",
+    visibility = ["//visibility:public"],
+)

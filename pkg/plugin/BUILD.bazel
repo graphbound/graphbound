@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "plugin",
+    srcs = ["provider.go"],
+    importpath = "github.com/graphbound/graphbound/pkg/plugin",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/httpds",
+        "//pkg/log",
+        "//pkg/metric",
+        "//pkg/requestid",
+        "//pkg/trace",
+        "@org_uber_go_zap//:zap",
+    ],
+)
