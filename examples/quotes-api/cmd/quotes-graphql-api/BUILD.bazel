@@ -1,0 +1,32 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "quotes-graphql-api_lib",
+    srcs = [
+        "config.go",
+        "main.go",
+        "wire_gen.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/examples/quotes-api/cmd/quotes-graphql-api",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//internal/http/graph",
+        "//internal/http/graph/generated",
+        "//internal/http/rest",
+        "//internal/quote",
+        "//pkg/yeapi",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_graphbound_graphbound//pkg/config",
+        "@com_github_graphbound_graphbound//pkg/httpds",
+        "@com_github_graphbound_graphbound//pkg/log",
+        "@com_github_graphbound_graphbound//pkg/server",
+        "@com_github_hellofresh_health_go_v5//:health-go",
+        "@com_github_kelseyhightower_envconfig//:envconfig",
+    ],
+)
+
+go_binary(
+    name = "quotes-graphql-api",
+    embed = [":quotes-graphql-api_lib"],
+    visibility = ["//visibility:public"],
+)
