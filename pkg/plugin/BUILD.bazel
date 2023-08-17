@@ -14,3 +14,9 @@ go_library(
         "@org_uber_go_zap//:zap",
     ],
 )
+
+alias(
+    name = "go_default_library",
+    actual = ":plugin",
+    visibility = ["//visibility:public"],
+)

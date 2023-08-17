@@ -6,3 +6,9 @@ go_library(
     importpath = "github.com/graphbound/graphbound/pkg/config",
     visibility = ["//visibility:public"],
 )
+
+alias(
+    name = "go_default_library",
+    actual = ":config",
+    visibility = ["//visibility:public"],
+)
