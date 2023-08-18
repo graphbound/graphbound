@@ -14,3 +14,9 @@ go_library(
         "@com_github_hellofresh_health_go_v5//checks/http",
     ],
 )
+
+alias(
+    name = "go_default_library",
+    actual = ":health",
+    visibility = ["//visibility:public"],
+)

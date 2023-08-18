@@ -10,3 +10,9 @@ go_library(
     visibility = ["//visibility:public"],
     deps = ["@com_github_gin_gonic_gin//:gin"],
 )
+
+alias(
+    name = "go_default_library",
+    actual = ":ginctx",
+    visibility = ["//visibility:public"],
+)

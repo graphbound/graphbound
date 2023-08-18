@@ -19,3 +19,9 @@ go_library(
         "@com_github_prometheus_client_golang//prometheus/promhttp",
     ],
 )
+
+alias(
+    name = "go_default_library",
+    actual = ":metric",
+    visibility = ["//visibility:public"],
+)
