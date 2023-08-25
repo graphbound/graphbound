@@ -3,19 +3,18 @@ module(
     version = "1.0",
 )
 
+bazel_dep(name = "aspect_bazel_lib", version = "1.34.0")
 bazel_dep(name = "rules_go", version = "0.40.1")
 bazel_dep(name = "gazelle", version = "0.31.1")
 bazel_dep(name = "rules_oci", version = "1.2.0")
 bazel_dep(name = "rules_pkg", version = "0.9.1")
 bazel_dep(name = "com_github_graphbound_graphbound", version = "")
-
 local_path_override(
     module_name = "com_github_graphbound_graphbound",
     path = "../../",
 )
 
 go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
-
 go_deps.from_file(go_mod = "//:go.mod")
 
 # All *direct* Go dependencies of the module have to be listed explicitly.
@@ -33,7 +32,6 @@ use_repo(
 )
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
-
 oci.pull(
     name = "distroless_base",
     digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",
@@ -43,5 +41,4 @@ oci.pull(
         "linux/arm64",
     ],
 )
-
 use_repo(oci, "distroless_base")
