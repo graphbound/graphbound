@@ -3,6 +3,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph"
@@ -13,21 +15,29 @@ import (
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/server"
 	"github.com/hellofresh/health-go/v5"
+	"go.uber.org/zap"
 )
 
 type API struct {
 	quoteController rest.QuoteController[gin.Context]
-	server          *gin.Engine
+	router          *gin.Engine
+	logger          *zap.SugaredLogger
 }
 
 func ProvideAPI(
 	quoteController rest.QuoteController[gin.Context],
-	server *gin.Engine,
-) *API {
+	router *gin.Engine,
+	logger *zap.SugaredLogger,
+) (*API, error) {
+	if logger == nil {
+		return nil, fmt.Errorf("ProvideAPI: logger is nil")
+	}
+
 	return &API{
 		quoteController: quoteController,
-		server:          server,
-	}
+		router:          router,
+		logger:          logger,
+	}, nil
 }
 
 func ProvideHealthChecks(

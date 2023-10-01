@@ -23,8 +23,10 @@ go_library(
         "@com_github_graphbound_graphbound//pkg/httpds:go_default_library",
         "@com_github_graphbound_graphbound//pkg/log:go_default_library",
         "@com_github_graphbound_graphbound//pkg/server:go_default_library",
+        "@com_github_graphbound_graphbound//pkg/shutdown:go_default_library",
         "@com_github_hellofresh_health_go_v5//:health-go",
         "@com_github_kelseyhightower_envconfig//:envconfig",
+        "@org_uber_go_zap//:zap",
     ],
 )
 

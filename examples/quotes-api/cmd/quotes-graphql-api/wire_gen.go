@@ -7,6 +7,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph"
 	"github.com/graphbound/graphbound/examples/quotes-api/internal/http/graph/generated"
@@ -17,6 +18,7 @@ import (
 	"github.com/graphbound/graphbound/pkg/log"
 	"github.com/graphbound/graphbound/pkg/server"
 	"github.com/hellofresh/health-go/v5"
+	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
@@ -51,7 +53,12 @@ func initializeAPI() (*API, func(), error) {
 	}
 	executableSchema := generated.NewExecutableSchema(generatedConfig)
 	engine := server.NewGraphQLServer(sugaredLogger, serverTracerProvider, version, v2, executableSchema)
-	api := ProvideAPI(quoteController, engine)
+	api, err := ProvideAPI(quoteController, engine, sugaredLogger)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	return api, func() {
 		cleanup2()
 		cleanup()
@@ -67,16 +74,24 @@ var (
 
 type API struct {
 	quoteController rest.QuoteController[gin.Context]
-	server          *gin.Engine
+	router          *gin.Engine
+	logger          *zap.SugaredLogger
 }
 
 func ProvideAPI(
-	quoteController rest.QuoteController[gin.Context], server2 *gin.Engine,
-) *API {
+	quoteController rest.QuoteController[gin.Context],
+	router *gin.Engine,
+	logger *zap.SugaredLogger,
+) (*API, error) {
+	if logger == nil {
+		return nil, fmt.Errorf("ProvideAPI: logger is nil")
+	}
+
 	return &API{
 		quoteController: quoteController,
-		server:          server2,
-	}
+		router:          router,
+		logger:          logger,
+	}, nil
 }
 
 func ProvideHealthChecks(
