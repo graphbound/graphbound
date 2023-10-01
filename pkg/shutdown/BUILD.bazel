@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "shutdown",
+    srcs = [
+        "log.go",
+        "shutdown.go",
+    ],
+    importpath = "github.com/graphbound/graphbound/pkg/shutdown",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_skovtunenko_graterm//:graterm",
+        "@org_uber_go_zap//:zap",
+    ],
+)
+
+alias(
+    name = "go_default_library",
+    actual = ":shutdown",
+    visibility = ["//visibility:public"],
+)
